@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberSentinel — Security Dashboard</title>
+
+  <!-- Favicon inline SVG -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d4aa' stroke-width='2'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="static/css/style.css" />
+
+  <!-- Chart.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
+
+  <!-- App JS (defer so DOM is ready) -->
+  <script src="static/js/app.js" defer></script>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     LOGIN PAGE
+     ══════════════════════════════════════════════════════════════ -->
+<div id="loginPage">
+  <div class="login-wrapper">
+    <div class="login-card">
+
+      <!-- Logo -->
+      <div class="login-logo">
+        <div class="login-logo-icon">
+          <!-- Shield icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="login-logo-name">CyberSentinel</div>
+          <div class="login-logo-sub">Security Platform v1.0</div>
+        </div>
+      </div>
+
+      <h1 class="login-title">Welcome back</h1>
+      <p  class="login-subtitle">Sign in to access your security dashboard</p>
+
+      <!-- Error message box (hidden by default) -->
+      <div class="form-error" id="loginError">Invalid credentials.</div>
+
+      <!-- Login form -->
+      <form id="loginForm" autocomplete="off">
+        <div class="form-group">
+          <label class="form-label" for="loginEmail">Email Address</label>
+          <input
+            class="form-input"
+            type="email"
+            id="loginEmail"
+            placeholder="analyst@company.com"
+            value="admin@cybersentinel.io"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="loginPassword">Password</label>
+          <input
+            class="form-input"
+            type="password"
+            id="loginPassword"
+            placeholder="••••••••••"
+            value="securepass"
+            required
+          />
+        </div>
+
+        <button class="btn-primary" type="submit">
+          <span id="loginBtnText">Sign In</span>
+        </button>
+      </form>
+
+      <hr class="login-divider" />
+
+      <!-- Demo hint -->
+      <p class="login-demo-hint">
+        Demo credentials are pre-filled.<br />
+        Email: <span>admin@cybersentinel.io</span> &nbsp;|&nbsp; Password: <span>securepass</span>
+      </p>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     DASHBOARD PAGE (hidden until logged in)
+     ══════════════════════════════════════════════════════════════ -->
+<div id="dashboardPage" style="display:none;">
+
+  <!-- Full-page loading overlay (shown during scan) -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner-ring"></div>
+    <div class="loading-text">Scanning target — please wait...</div>
+  </div>
+
+  <div class="dashboard-layout">
+
+    <!-- ── SIDEBAR ─────────────────────────────────────────────── -->
+    <aside class="sidebar">
+
+      <!-- Logo -->
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="sidebar-logo-name">CyberSentinel</div>
+          <div class="sidebar-logo-version">Pro v1.0</div>
+        </div>
+      </div>
+
+      <!-- Nav: Overview -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Overview</div>
+
+        <div class="nav-item active">
+          <!-- Dashboard icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+          </svg>
+          Dashboard
+        </div>
+
+        <div class="nav-item">
+          <!-- Search icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          Port Scanner
+          <span class="nav-badge">3</span>
+        </div>
+
+        <div class="nav-item">
+          <!-- File icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+            <polyline points="13 2 13 9 20 9"/>
+          </svg>
+          Reports
+        </div>
+      </div>
+
+      <!-- Nav: Monitoring -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Monitoring</div>
+
+        <div class="nav-item">
+          <!-- Activity icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Threat Intel
+          <span class="nav-badge">7</span>
+        </div>
+
+        <div class="nav-item">
+          <!-- Clock icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Activity Logs
+        </div>
+
+        <div class="nav-item">
+          <!-- Network icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="8" rx="2"/>
+            <rect x="2" y="14" width="20" height="8" rx="2"/>
+            <line x1="6" y1="6" x2="6.01" y2="6"/>
+            <line x1="6" y1="18" x2="6.01" y2="18"/>
+          </svg>
+          Network Map
+        </div>
+      </div>
+
+      <!-- Nav: Config -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Config</div>
+
+        <div class="nav-item">
+          <!-- Settings icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2
+                     M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/>
+          </svg>
+          Settings
+        </div>
+      </div>
+
+      <!-- User card + logout -->
+      <div class="sidebar-bottom">
+        <div class="user-card" id="logoutBtn" title="Click to sign out">
+          <div class="user-avatar" id="sidebarUserInit">AR</div>
+          <div>
+            <div class="user-name" id="sidebarUserName">Admin</div>
+            <div class="user-role">Click to logout</div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+    <!-- /sidebar -->
+
+
+    <!-- ── MAIN PANEL ───────────────────────────────────────────── -->
+    <div class="main-panel">
+
+      <!-- ── TOPBAR ─────────────────────────────────────────────── -->
+      <header class="topbar">
+        <!-- Mobile sidebar toggle (hidden on desktop via CSS) -->
+        <button id="sidebarToggle" class="icon-btn" style="display:none"
+                aria-label="Toggle sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#607a90" stroke-width="2">
+            <line x1="3" y1="6"  x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+
+        <div>
+          <div class="topbar-title">Security Dashboard</div>
+          <div class="topbar-breadcrumb">/ overview</div>
+        </div>
+
+        <!-- IP Scan bar -->
+        <div class="scan-bar">
+          <input
+            class="scan-input"
+            type="text"
+            id="scanInput"
+            placeholder="Enter IP address  (e.g. 93.184.216.34)"
+            spellcheck="false"
+            autocomplete="off"
+          />
+          <button class="scan-btn" id="scanBtn" type="button" aria-label="Start scan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            Scan
+          </button>
+        </div>
+
+        <!-- Right actions -->
+        <div class="topbar-actions">
+          <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span class="status-text">Protected</span>
+          </div>
+
+          <!-- Notification bell -->
+          <div class="icon-btn" title="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#607a90" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="notif-badge"></span>
+          </div>
+
+          <!-- Profile -->
+          <div class="icon-btn" title="Profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#607a90" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+        </div>
+      </header>
+      <!-- /topbar -->
+
+
+      <!-- ── PAGE CONTENT ─────────────────────────────────────────── -->
+      <main class="page-content">
+
+        <!-- Alert / error banner (shown on scan errors) -->
+        <div class="alert-banner" id="alertBanner" role="alert"></div>
+
+        <!-- Scan result panel (hidden until scan completes) -->
+        <div class="result-panel" id="resultPanel">
+          <div class="result-panel-title">// Scan Result</div>
+          <div class="result-meta">
+            <span class="result-ip" id="resultIp">—</span>
+            <span class="risk-pill" id="resultRisk">
+              <span class="risk-dot"></span> —
+            </span>
+          </div>
+          <div class="ports-list" id="resultPorts">
+            <!-- Port chips injected by JS -->
+          </div>
+        </div>
+
+        <!-- ── METRIC CARDS ──────────────────────────────────────── -->
+        <div class="metrics-grid">
+
+          <!-- Scans Today -->
+          <div class="metric-card mc-teal">
+            <div class="metric-header">
+              <span class="metric-label">Scans Today</span>
+              <div class="metric-icon mi-teal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="m21 21-4.35-4.35"/>
+                </svg>
+              </div>
+            </div>
+            <div class="metric-value" id="metricScans">47</div>
+            <div class="metric-delta"><span class="up">+12%</span> vs yesterday</div>
+          </div>
+
+          <!-- Open Ports -->
+          <div class="metric-card mc-red">
+            <div class="metric-header">
+              <span class="metric-label">Open Ports</span>
+              <div class="metric-icon mi-red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ff4a6e" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2"/>
+                  <path d="M8 21h8M12 17v4"/>
+                </svg>
+              </div>
+            </div>
+            <div class="metric-value" id="metricPorts">12</div>
+            <div class="metric-delta"><span class="down">+3</span> new detections</div>
+          </div>
+
+          <!-- High Risk Alerts -->
+          <div class="metric-card mc-amber">
+            <div class="metric-header">
+              <span class="metric-label">High Risk</span>
+              <div class="metric-icon mi-amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m10.29 3.86-8.72 15.1A2 2 0 0 0 3.28 22h17.44a2 2 0 0 0
+                           1.71-3.04L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9"  x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </div>
+            </div>
+            <div class="metric-value">4</div>
+            <div class="metric-delta"><span class="down">critical</span> alerts active</div>
+          </div>
+
+          <!-- IPs Monitored -->
+          <div class="metric-card mc-blue">
+            <div class="metric-header">
+              <span class="metric-label">IPs Monitored</span>
+              <div class="metric-icon mi-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#1e7fff" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="2"  width="20" height="8" rx="2"/>
+                  <rect x="2" y="14" width="20" height="8" rx="2"/>
+                  <line x1="6"  y1="6"  x2="6.01"  y2="6"/>
+                  <line x1="6"  y1="18" x2="6.01"  y2="18"/>
+                </svg>
+              </div>
+            </div>
+            <div class="metric-value">238</div>
+            <div class="metric-delta"><span class="up">+8</span> added this week</div>
+          </div>
+
+        </div>
+        <!-- /metrics-grid -->
+
+
+        <!-- ── CHARTS ROW ────────────────────────────────────────── -->
+        <div class="charts-grid">
+
+          <!-- Port Distribution (Bar) -->
+          <div class="chart-card">
+            <div class="card-header">
+              <span class="card-title">Port Distribution</span>
+              <span class="card-tag">Live</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="portDistChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Risk Breakdown (Doughnut) -->
+          <div class="chart-card">
+            <div class="card-header">
+              <span class="card-title">Risk Breakdown</span>
+              <span class="card-tag">All Scans</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="riskChart"></canvas>
+            </div>
+          </div>
+
+        </div>
+        <!-- /charts-grid -->
+
+
+        <!-- ── BOTTOM ROW: Logs + Suggestions ───────────────────── -->
+        <div class="bottom-grid">
+
+          <!-- Activity Logs table -->
+          <div class="logs-card">
+            <div class="logs-header">
+              <span class="card-title">Activity Logs</span>
+              <div class="filter-chips">
+                <button class="filter-chip active" data-filter="all">All</button>
+                <button class="filter-chip"        data-filter="high">High</button>
+                <button class="filter-chip"        data-filter="medium">Medium</button>
+                <button class="filter-chip"        data-filter="low">Low</button>
+              </div>
+            </div>
+            <div class="logs-table-wrap">
+              <table class="logs-table">
+                <thead>
+                  <tr>
+                    <th>IP Address</th>
+                    <th>Timestamp</th>
+                    <th>Open Ports</th>
+                    <th>Risk Level</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="logsTableBody">
+                  <!-- Rows injected by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- AI Suggestions panel -->
+          <div class="suggestions-card">
+            <div class="suggestions-header">
+              <div class="ai-pulse"></div>
+              <span class="card-title">AI Suggestions</span>
+            </div>
+            <div class="suggestions-body" id="suggestionsList">
+              <!-- Items injected by JS -->
+            </div>
+          </div>
+
+        </div>
+        <!-- /bottom-grid -->
+
+      </main>
+      <!-- /page-content -->
+
+    </div>
+    <!-- /main-panel -->
+
+  </div>
+  <!-- /dashboard-layout -->
+
+</div>
+<!-- /dashboardPage -->
+
+</body>
+</html>
