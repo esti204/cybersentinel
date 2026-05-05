@@ -16,7 +16,7 @@
    CONFIGURATION
    ═══════════════════════════════════════════════════════════════ */
 
-const API_BASE = "http://127.0.0.1:5000/api";
+const API_BASE = "https://cybersentinel-5fz2.onrender.com/api";
 
 /* ═══════════════════════════════════════════════════════════════
    AUTH — Simple localStorage simulation
